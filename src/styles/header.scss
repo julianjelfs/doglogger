@@ -1,0 +1,21 @@
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-content: center;
+    padding: 10px 0;
+    margin-bottom: 5px;
+    position: relative;
+
+    .logout-icon {
+        position: absolute;
+        margin-top: 6px;
+        margin-left: 16px;
+    }
+}
+
+.headline {
+    font-size: 26px;
+    margin: 0;
+    width: 100%;
+    text-align: center;
+}

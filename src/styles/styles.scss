@@ -1,0 +1,48 @@
+@import "./resets";
+@import "./header";
+@import "./tabs";
+@import "./content";
+
+.app {
+    max-width: 600px;
+}
+
+.login {
+    max-width: 400px;
+
+    form {
+        margin: 0;
+    }
+    
+    label {
+        font-size: 12px;
+    }
+
+    input {
+        padding: 8px;
+        width: 100%;
+        margin-top: 5px;
+        margin-bottom: 10px;
+        border-radius: 5px;
+        border: 1px solid #ddd;
+    }
+
+    button {
+        padding: 8px;
+        background-color: rgb(17, 6, 11);
+        font-weight: bold;
+        color: #ffffff;
+        border: none;
+        border-radius: 5px;
+        box-shadow: 5px 5px 5px 0px #efefef;
+        margin-top: 10px;
+        margin-right: 10px;
+
+        &.cancel {
+            background-color: #fff;
+            color: #000;
+            border: 1px solid #efefef;
+            font-weight: normal;
+        }
+    }
+}
