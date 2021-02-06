@@ -3,15 +3,22 @@ module Control exposing (..)
 import Data exposing (..)
 import Login
 import Ports
+import SingleDatePicker exposing (TimePickerVisibility(..))
+import Task
+import Time
 
 
 init : Flags -> ( Model, Cmd Msg )
 init flags =
     ( { user = flags.user
       , loginModel = Login.init
-      , selectedTab = Poo
+      , selectedTab = PooTab
+      , picker = SingleDatePicker.init
+      , pickedTime = Nothing
+      , zone = Time.utc
+      , now = Time.millisToPosix 0
       }
-    , Cmd.none
+    , Task.perform AdjustTimeZone Time.here
     )
 
 
@@ -39,3 +46,17 @@ update msg model =
 
         SignOut ->
             ( { model | user = Nothing }, Ports.signOut () )
+
+        UpdatePicker ( newPicker, maybeNewTime ) ->
+            ( { model
+                | picker = newPicker
+                , pickedTime = Maybe.map Just maybeNewTime |> Maybe.withDefault model.pickedTime
+              }
+            , Cmd.none
+            )
+
+        AdjustTimeZone newZone ->
+            ( { model | zone = newZone }, Cmd.none )
+
+        Tick p ->
+            ( { model | now = p }, Cmd.none )

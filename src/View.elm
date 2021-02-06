@@ -1,5 +1,6 @@
 module View exposing (..)
 
+import Components.Poo as Poo
 import Data exposing (..)
 import Html exposing (..)
 import Html.Attributes exposing (..)
@@ -31,22 +32,17 @@ view model =
 content : Model -> Html Msg
 content model =
     case model.selectedTab of
-        Poo ->
-            poo model
+        PooTab ->
+            Poo.view model
 
-        Whoopsie ->
+        WhoopsieTab ->
             whoopsie model
 
-        Weight ->
+        WeightTab ->
             weight model
 
-        Charts ->
+        ChartsTab ->
             charts model
-
-
-poo : Model -> Html Msg
-poo _ =
-    div [ class "content" ] [ h3 [] [ text "Poo" ] ]
 
 
 whoopsie : Model -> Html Msg
@@ -79,8 +75,8 @@ tabs model =
     in
     ul
         [ class "tabs" ]
-        [ tab Poo "Poo" "💩"
-        , tab Whoopsie "Whoopsie" "\u{1F926}"
-        , tab Weight "Weight" "⚖️"
-        , tab Charts "Charts" "📈"
+        [ tab PooTab "Poo" "💩"
+        , tab WhoopsieTab "Whoopsie" "\u{1F926}"
+        , tab WeightTab "Weight" "⚖️"
+        , tab ChartsTab "Charts" "📈"
         ]
