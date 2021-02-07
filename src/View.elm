@@ -1,6 +1,6 @@
 module View exposing (..)
 
-import Components.Poo as Poo
+import Components.NowOrThen as NowOrThen
 import Data exposing (..)
 import Html exposing (..)
 import Html.Attributes exposing (..)
@@ -26,17 +26,33 @@ view model =
                     ]
                 , tabs model
                 , content model
+                , footer model
                 ]
+
+
+footer : Model -> Html Msg
+footer model =
+    case model.selectedTab of
+        PooTab ->
+            a [ class "footer", onClick (SelectTab ChartsTab) ]
+                [ text "poo charts" ]
+
+        WhoopsTab ->
+            a [ class "footer", onClick (SelectTab ChartsTab) ]
+                [ text "whoopsie charts" ]
+
+        _ ->
+            text ""
 
 
 content : Model -> Html Msg
 content model =
     case model.selectedTab of
         PooTab ->
-            Poo.view model
+            Html.map NowOrThenMsg (NowOrThen.view model.poo)
 
-        WhoopsieTab ->
-            whoopsie model
+        WhoopsTab ->
+            Html.map NowOrThenMsg (NowOrThen.view model.whoops)
 
         WeightTab ->
             weight model
@@ -63,20 +79,19 @@ charts _ =
 tabs : Model -> Html Msg
 tabs model =
     let
-        tab t txt icon =
+        tab t txt =
             li
                 [ class "tab"
                 , classList [ ( "-selected", model.selectedTab == t ) ]
                 , onClick (SelectTab t)
                 ]
                 [ a [] [ text txt ]
-                , span [] [ text icon ]
                 ]
     in
     ul
         [ class "tabs" ]
-        [ tab PooTab "Poo" "💩"
-        , tab WhoopsieTab "Whoopsie" "\u{1F926}"
-        , tab WeightTab "Weight" "⚖️"
-        , tab ChartsTab "Charts" "📈"
+        [ tab PooTab "Poo"
+        , tab WhoopsTab "Whoopsie"
+        , tab WeightTab "Weight"
+        , tab ChartsTab "Charts"
         ]

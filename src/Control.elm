@@ -1,24 +1,30 @@
 module Control exposing (..)
 
+import Components.NowOrThen as NowOrThen
 import Data exposing (..)
 import Login
 import Ports
-import SingleDatePicker exposing (TimePickerVisibility(..))
-import Task
-import Time
 
 
 init : Flags -> ( Model, Cmd Msg )
 init flags =
+    let
+        ( poo, pooCmd ) =
+            NowOrThen.init
+
+        ( whoops, whoopsCmd ) =
+            NowOrThen.init
+    in
     ( { user = flags.user
       , loginModel = Login.init
       , selectedTab = PooTab
-      , picker = SingleDatePicker.init
-      , pickedTime = Nothing
-      , zone = Time.utc
-      , now = Time.millisToPosix 0
+      , poo = poo
+      , whoops = whoops
       }
-    , Task.perform AdjustTimeZone Time.here
+    , Cmd.batch
+        [ Cmd.map NowOrThenMsg pooCmd
+        , Cmd.map NowOrThenMsg whoopsCmd
+        ]
     )
 
 
@@ -47,16 +53,25 @@ update msg model =
         SignOut ->
             ( { model | user = Nothing }, Ports.signOut () )
 
-        UpdatePicker ( newPicker, maybeNewTime ) ->
-            ( { model
-                | picker = newPicker
-                , pickedTime = Maybe.map Just maybeNewTime |> Maybe.withDefault model.pickedTime
-              }
-            , Cmd.none
-            )
+        NowOrThenMsg subMsg ->
+            case model.selectedTab of
+                PooTab ->
+                    let
+                        ( subModel, subCmd ) =
+                            NowOrThen.update Ports.pooNow Ports.pooThen subMsg model.poo
+                    in
+                    ( { model | poo = subModel }
+                    , Cmd.map NowOrThenMsg subCmd
+                    )
 
-        AdjustTimeZone newZone ->
-            ( { model | zone = newZone }, Cmd.none )
+                WhoopsTab ->
+                    let
+                        ( subModel, subCmd ) =
+                            NowOrThen.update Ports.whoopsNow Ports.whoopsThen subMsg model.whoops
+                    in
+                    ( { model | whoops = subModel }
+                    , Cmd.map NowOrThenMsg subCmd
+                    )
 
-        Tick p ->
-            ( { model | now = p }, Cmd.none )
+                _ ->
+                    ( model, Cmd.none )

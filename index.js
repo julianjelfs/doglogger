@@ -34,6 +34,30 @@ firebase.auth().onAuthStateChanged((user) => {
       firebase.auth().signOut();
     });
 
+    elm.ports.pooNow.subscribe(() => {
+      db.collection('poos').add({ timestamp: +new Date()}).then(() => {
+        elm.ports.complete.send('complete');
+      })
+    });
+
+    elm.ports.pooThen.subscribe((timestamp) => {
+      db.collection('poos').add({ timestamp}).then(() => {
+        elm.ports.complete.send('complete');
+      })
+    });
+
+    elm.ports.whoopsNow.subscribe(() => {
+      db.collection('whoops').add({ timestamp: +new Date()}).then(() => {
+        elm.ports.complete.send('complete');
+      })
+    });
+
+    elm.ports.whoopsThen.subscribe((timestamp) => {
+      db.collection('whoops').add({ timestamp}).then(() => {
+        elm.ports.complete.send('complete');
+      })
+    });
+
     getData(user);
 })
 
@@ -43,26 +67,14 @@ const db = firebase.firestore();
 function getData(user) {
   if(!user) return;
 
-  // db.collection(collection(user)).get().then(query => {
-  //   const items = [];
-  //   const now = today();
-  //   query.forEach(item => {
-  //     const data = item.data();
-  //     const lw = dayjs(data.lastWashed);
-  //     const dueOn = lw.add(data.intervalInDays, 'day');
-  //     const dueInDays = dueOn.diff(now, 'day');
-  //     items.push({
-  //       id: item.id,
-  //       ...item.data(),
-  //       dueInDays, 
-  //     })
-  //   })
-  //   if (elm) {
-  //     elm.ports.receivedItems.send(items);
-  //   }
-  // })
+  db.collection('poos').get().then(query => {
+    const items = [];
+    query.forEach(item => {
+      const data = item.data();
+      console.log(data)
+    })
+    // if (elm) {
+    //   elm.ports.receivedItems.send(items);
+    // }
+  })
 }
-
-// function collection({uid}) {
-//   return `${uid}_items`;
-// }

@@ -2,10 +2,16 @@
 @import "./header";
 @import "./tabs";
 @import "./content";
-@import "./footnote";
+@import "./footer";
+@import "./noworthen";
+
 
 .app {
     max-width: 600px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    height: 100%;
 }
 
 .login {

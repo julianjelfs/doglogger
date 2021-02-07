@@ -1,9 +1,8 @@
 module Data exposing (Flags, Model, Msg(..), Tab(..), User)
 
+import Components.NowOrThen as NowOrThen
 import Json.Encode as E
 import Login
-import SingleDatePicker exposing (Settings, TimePickerVisibility(..), defaultSettings, defaultTimePickerSettings)
-import Time exposing (Posix, Zone)
 
 
 type alias Flags =
@@ -12,7 +11,7 @@ type alias Flags =
 
 type Tab
     = PooTab
-    | WhoopsieTab
+    | WhoopsTab
     | WeightTab
     | ChartsTab
 
@@ -22,19 +21,15 @@ type Msg
     | ReceivedItems E.Value
     | SelectTab Tab
     | SignOut
-    | UpdatePicker ( SingleDatePicker.DatePicker, Maybe Posix )
-    | AdjustTimeZone Zone
-    | Tick Posix
+    | NowOrThenMsg NowOrThen.Msg
 
 
 type alias Model =
     { user : Maybe User
     , loginModel : Login.Model
     , selectedTab : Tab
-    , picker : SingleDatePicker.DatePicker
-    , pickedTime : Maybe Posix
-    , zone : Zone
-    , now : Posix
+    , poo : NowOrThen.Model
+    , whoops : NowOrThen.Model
     }
 
 
