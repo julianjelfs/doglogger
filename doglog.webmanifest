@@ -1,0 +1,15 @@
+{
+  "background_color": "hotpink",
+  "description": "Log information about the dog",
+  "display": "fullscreen",
+  "icons": [
+    {
+      "src": "apple-touch-icon.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    }
+  ],
+  "name": "Doglogger",
+  "short_name": "Doglogger",
+  "start_url": "/index.html"
+}
