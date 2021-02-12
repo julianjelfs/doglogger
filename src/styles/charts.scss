@@ -1,0 +1,117 @@
+.chart__content {
+    padding: 10px;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+.chart__btn {
+    width: 100%;
+    flex: auto;
+    margin-bottom: 10px;
+    border: 4px solid black;
+    border-radius: 5px;
+    background-color: white;
+    position: relative;
+    font-size: 40px;
+    font-weight: bold;
+    text-transform: uppercase;
+
+    &:last-child {
+        margin-bottom: 0;
+    }
+}
+
+.chart__today {
+    display: flex; 
+    flex-wrap: wrap;
+}
+
+.chart__pill {
+    display: flex;
+    align-items: center;
+    border-radius: 12px;
+    padding: 10px;
+    border: 1px solid black;
+    background-color: hotpink;
+    color: white;
+    font-weight: bold;
+    text-align: center;
+    margin-right: 10px;
+    margin-bottom: 10px;
+}
+
+.chart__delete {
+    margin-left: 15px;
+    cursor: pointer;
+}
+
+.chart__nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+
+    .prev, .next {
+        background-color: black;
+        color: white;
+        width: 40px;
+        border-radius: 5px;
+        padding: 5px 10px;
+        text-align: center;
+        font-weight: bold;
+
+        &.-disabled {
+            background-color: grey;
+        }
+    }
+}
+
+.chart__average {
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    height: 100%;
+
+    .chart__average-legend {
+        font-size: 14px;
+    }
+
+    .chart__average-value {
+        font-size: 80px;
+        font-weight: bold;
+    }
+}
+
+.chart__weight {
+    display: flex; 
+    justify-content: space-between;
+    padding: 15px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+    margin-bottom: 5px;
+
+    .chart__weight-date {
+        flex: 4;
+    }
+
+    .chart__weight-value {
+        flex: 2;
+        text-align: right;
+        &:after {
+            content: ' kg';
+            font-size: 12px;
+        }
+    }
+
+    .chart__weight-age {
+        flex: 2;
+        text-align: right;
+        &:after {
+            content: ' wks';
+            font-size: 12px;
+        }
+    }
+}

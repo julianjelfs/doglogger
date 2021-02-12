@@ -58,23 +58,48 @@ firebase.auth().onAuthStateChanged((user) => {
       })
     });
 
-    getData(user);
-})
+    elm.ports.loadCollection.subscribe((name) => {
+      console.log('getting collection: ', name)
+      getData(user, name).then(data => {
+        elm.ports[`received_${name}`].send(data);
+      })
+    });
 
+    elm.ports.deletePoo.subscribe((id) => {
+      deleteDoc(user, 'poos', id);
+    });
+
+    elm.ports.deleteWhoops.subscribe((id) => {
+      deleteDoc(user, 'whoops', id);
+    });
+
+    elm.ports.enterWeight.subscribe(([date, weight]) => {
+      db.collection('weight').add({ date, weight }).then(() => {
+        elm.ports.complete.send('complete');
+      })
+    });
+})
 
 const db = firebase.firestore();
 
-function getData(user) {
-  if(!user) return;
+function deleteDoc(user, collection, id) {
+    return db.collection(collection).doc(id).delete().then(() => getData(user, collection)).then(data => {
+        elm.ports[`received_${collection}`].send(data);
+    });
+}
 
-  db.collection('poos').get().then(query => {
+function getData(user, collection) {
+  if(!user) return Promise.resolve([]);
+
+  return db.collection(collection).get().then(query => {
     const items = [];
     query.forEach(item => {
       const data = item.data();
-      console.log(data)
+      items.push({
+        ...data,
+        id: item.id
+      });
     })
-    // if (elm) {
-    //   elm.ports.receivedItems.send(items);
-    // }
+    return items;
   })
 }

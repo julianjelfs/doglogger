@@ -1,5 +1,7 @@
 module Control exposing (..)
 
+import Components.Charts as Charts
+import Components.EnterWeight as Weight
 import Components.NowOrThen as NowOrThen
 import Data exposing (..)
 import Login
@@ -14,16 +16,26 @@ init flags =
 
         ( whoops, whoopsCmd ) =
             NowOrThen.init
+
+        ( charts, chartsCmd ) =
+            Charts.init Charts.NoChart
+
+        ( weight, weightCmd ) =
+            Weight.init
     in
     ( { user = flags.user
       , loginModel = Login.init
       , selectedTab = PooTab
       , poo = poo
       , whoops = whoops
+      , charts = charts
+      , weight = weight
       }
     , Cmd.batch
         [ Cmd.map NowOrThenMsg pooCmd
         , Cmd.map NowOrThenMsg whoopsCmd
+        , Cmd.map ChartsMsg chartsCmd
+        , Cmd.map WeightMsg weightCmd
         ]
     )
 
@@ -41,9 +53,20 @@ update msg model =
             )
 
         SelectTab tab ->
-            ( { model | selectedTab = tab }
-            , Cmd.none
-            )
+            case tab of
+                ChartsTab chartType ->
+                    let
+                        ( charts, chartsCmd ) =
+                            Charts.init chartType
+                    in
+                    ( { model | charts = charts, selectedTab = tab }
+                    , Cmd.map ChartsMsg chartsCmd
+                    )
+
+                _ ->
+                    ( { model | selectedTab = tab }
+                    , Cmd.none
+                    )
 
         ReceivedItems _ ->
             ( model
@@ -52,6 +75,24 @@ update msg model =
 
         SignOut ->
             ( { model | user = Nothing }, Ports.signOut () )
+
+        ChartsMsg subMsg ->
+            let
+                ( subModel, subCmd ) =
+                    Charts.update subMsg model.charts
+            in
+            ( { model | charts = subModel }
+            , Cmd.map ChartsMsg subCmd
+            )
+
+        WeightMsg subMsg ->
+            let
+                ( subModel, subCmd ) =
+                    Weight.update subMsg model.weight
+            in
+            ( { model | weight = subModel }
+            , Cmd.map WeightMsg subCmd
+            )
 
         NowOrThenMsg subMsg ->
             case model.selectedTab of

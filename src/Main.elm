@@ -1,6 +1,8 @@
 module Main exposing (main)
 
 import Browser
+import Components.Charts as Charts
+import Components.EnterWeight as Weight
 import Components.NowOrThen as NowOrThen
 import Control exposing (..)
 import Data exposing (..)
@@ -28,4 +30,6 @@ subscriptions model =
         , Sub.map LoginMsg Login.subscriptions
         , Sub.map NowOrThenMsg (NowOrThen.subscriptions model.poo)
         , Sub.map NowOrThenMsg (NowOrThen.subscriptions model.whoops)
+        , Sub.map ChartsMsg (Charts.subscriptions model.charts)
+        , Sub.map WeightMsg (Weight.subscriptions model.weight)
         ]

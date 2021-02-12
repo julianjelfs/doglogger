@@ -14,7 +14,7 @@ import Ports
 import String
 import Task
 import Time exposing (Month(..), Posix, Zone)
-import Time.Extra exposing (Parts, partsToPosix)
+import Utils
 
 
 type Choosing
@@ -85,9 +85,9 @@ update onExecuteNow onExecuteThen msg (Model model) =
                         Just <|
                             String.fromInt (Time.toYear zone now)
                                 ++ "-"
-                                ++ monthToNum (Time.toMonth zone now)
+                                ++ Utils.monthToNum (Time.toMonth zone now)
                                 ++ "-"
-                                ++ pad (Time.toDay zone now)
+                                ++ Utils.pad (Time.toDay zone now)
                 }
             , Cmd.none
             )
@@ -107,7 +107,7 @@ update onExecuteNow onExecuteThen msg (Model model) =
 
                 ChoosingThen ->
                     ( Model { model | busy = True, onComplete = NotChoosing }
-                    , parseDate (Model model)
+                    , Utils.parseDate model model.hour model.minute
                         |> Maybe.map onExecuteThen
                         |> Maybe.withDefault Cmd.none
                     )
@@ -125,7 +125,7 @@ update onExecuteNow onExecuteThen msg (Model model) =
 
                 ChoosingThen ->
                     ( Model { model | busy = True, onComplete = ChoosingThen }
-                    , parseDate (Model model)
+                    , Utils.parseDate model model.hour model.minute
                         |> Maybe.map onExecuteThen
                         |> Maybe.withDefault Cmd.none
                     )
@@ -266,7 +266,7 @@ datetime (Model model) =
             ]
             (List.map
                 (\n ->
-                    option [ value (String.fromInt n), selected (model.hour == n) ] [ text (pad n) ]
+                    option [ value (String.fromInt n), selected (model.hour == n) ] [ text (Utils.pad n) ]
                 )
                 (List.range 0 23)
             )
@@ -276,123 +276,13 @@ datetime (Model model) =
             ]
             (List.map
                 (\n ->
-                    option [ value (String.fromInt n), selected (model.minute == n) ] [ text (pad n) ]
+                    option [ value (String.fromInt n), selected (model.minute == n) ] [ text (Utils.pad n) ]
                 )
                 (List.range 0 59)
             )
         ]
 
 
-pad : Int -> String
-pad =
-    String.fromInt >> String.padLeft 2 '0'
-
-
 subscriptions : Model -> Sub Msg
 subscriptions (Model _) =
     Ports.complete OnComplete
-
-
-monthToNum : Month -> String
-monthToNum month =
-    case month of
-        Jan ->
-            pad 1
-
-        Feb ->
-            pad 2
-
-        Mar ->
-            pad 3
-
-        Apr ->
-            pad 4
-
-        May ->
-            pad 5
-
-        Jun ->
-            pad 6
-
-        Jul ->
-            pad 7
-
-        Aug ->
-            pad 8
-
-        Sep ->
-            pad 9
-
-        Oct ->
-            pad 10
-
-        Nov ->
-            pad 11
-
-        Dec ->
-            pad 12
-
-
-numToMonth : Int -> Month
-numToMonth n =
-    case n of
-        1 ->
-            Jan
-
-        2 ->
-            Feb
-
-        3 ->
-            Mar
-
-        4 ->
-            Apr
-
-        5 ->
-            May
-
-        6 ->
-            Jun
-
-        7 ->
-            Jul
-
-        8 ->
-            Aug
-
-        9 ->
-            Sep
-
-        10 ->
-            Oct
-
-        11 ->
-            Nov
-
-        12 ->
-            Dec
-
-        _ ->
-            Jan
-
-
-parseDate : Model -> Maybe Int
-parseDate (Model model) =
-    Maybe.andThen
-        (\dateString ->
-            case String.split "-" dateString of
-                y :: m :: d :: _ ->
-                    Maybe.map3
-                        (\y_ m_ d_ ->
-                            Parts y_ (numToMonth m_) d_ model.hour model.minute 0 0
-                                |> partsToPosix model.zone
-                                |> Time.posixToMillis
-                        )
-                        (String.toInt y)
-                        (String.toInt m)
-                        (String.toInt d)
-
-                _ ->
-                    Nothing
-        )
-        model.dateString

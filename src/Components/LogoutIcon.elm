@@ -1,4 +1,4 @@
-module LogoutIcon exposing (..)
+module Components.LogoutIcon exposing (..)
 
 import Html exposing (Html)
 import Svg exposing (..)
